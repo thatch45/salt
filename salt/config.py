@@ -710,6 +710,7 @@ DEFAULT_MINION_OPTS = {
     'startup_states': '',
     'sls_list': [],
     'top_file': '',
+    'eflow_interval': 0.5,
     'file_client': 'remote',
     'use_master_when_local': False,
     'file_roots': {
@@ -861,6 +862,7 @@ DEFAULT_MASTER_OPTS = {
         'base': [salt.syspaths.BASE_PILLAR_ROOTS_DIR],
     },
     'file_client': 'local',
+    'eflow_interval': 0.5,
     'gitfs_remotes': [],
     'gitfs_mountpoint': '',
     'gitfs_root': '',
