@@ -385,6 +385,16 @@ def roster(opts, whitelist=None):
                       whitelist=whitelist)
 
 
+def eflow(opts, functions, runners):
+    '''
+    Load the eflow modules
+    '''
+    return LazyLoader(_module_dirs(opts, 'eflow', 'eflow'),
+                     opts,
+                     tag='eflow',
+                     pack={'__salt__': functions, '__runner__': runners})
+
+
 def states(opts, functions, whitelist=None):
     '''
     Returns the state modules
