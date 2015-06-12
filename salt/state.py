@@ -606,6 +606,8 @@ class State(object):
         self.__run_num = 0
         self.jid = jid
         self.instance_id = str(id(self))
+        self.inject_globals = {}
+        self.states_loader = 'states'
 
     def _gather_pillar(self):
         '''
@@ -752,7 +754,10 @@ class State(object):
                                         func[func.rindex('.'):]
                                         )
                                 self.functions[f_key] = funcs[func]
-        self.states = salt.loader.states(self.opts, self.functions)
+        if self.states_loader == 'eflow':
+            self.states = salt.loader.eflow(self.opts, self.functions, {})  # TODO: Add runners
+        else:
+            self.states = salt.loader.states(self.opts, self.functions)
         self.rend = salt.loader.render(self.opts, self.functions, states=self.states)
 
     def module_refresh(self):
@@ -1549,6 +1554,8 @@ class State(object):
             '__instance_id__': self.instance_id,
             '__lowstate__': immutabletypes.freeze(chunks) if chunks else {}
         }
+        if self.inject_globals:
+            inject_globals.update(self.inject_globals)
 
         if low.get('__prereq__'):
             test = sys.modules[self.states[cdata['full']].__module__].__opts__['test']
