@@ -592,8 +592,8 @@ class State(object):
     '''
     Class used to execute salt states
     '''
-    def __init__(self, opts, pillar=None, jid=None):
-        self.states_loader = 'states'
+    def __init__(self, opts, pillar=None, jid=None, loader='states'):
+        self.states_loader = loader
         if 'grains' not in opts:
             opts['grains'] = salt.loader.grains(opts)
         self.opts = opts
@@ -3093,11 +3093,11 @@ class HighState(BaseHighState):
     # a stack of active HighState objects during a state.highstate run
     stack = []
 
-    def __init__(self, opts, pillar=None, jid=None):
+    def __init__(self, opts, pillar=None, jid=None, loader='states'):
         self.opts = opts
         self.client = salt.fileclient.get_file_client(self.opts)
         BaseHighState.__init__(self, opts)
-        self.state = State(self.opts, pillar, jid)
+        self.state = State(self.opts, pillar, jid, loader)
         self.matcher = salt.minion.Matcher(self.opts)
 
         # tracks all pydsl state declarations globally across sls files
