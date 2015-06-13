@@ -4,6 +4,9 @@ The functions that manage the eflow register
 # Import python libs
 import fnmatch
 
+__func_alias__ = {
+    'set_': 'set',
+}
 
 # TODO: This is just a stub function to test the system, this will need
 # to be replaced!
