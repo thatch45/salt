@@ -111,3 +111,4 @@ class EFlowState(salt.state.HighState):
             left = interval - elapsed
             if left > 0:
                 time.sleep(left)
+            self.state.reset_run_num()
