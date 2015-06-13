@@ -16,7 +16,7 @@ import traceback
 import salt.state
 from salt.exceptions import SaltRenderError
 
-log = logging.GetLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class EFlowState(salt.state.HighState):
