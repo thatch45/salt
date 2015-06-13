@@ -20,7 +20,9 @@ def set_(name, add, match):
         __reg__[reg_key] = set()
     for event in __events__:
         if fnmatch.fnmatch(event['tag'], name):
-            val = event['data'].get()
+            val = event['data'].get(add)
+            if val is None:
+                val = 'None'
             ret['changes'][add] = val
             __reg__[reg_key].add(val)
     return ret
