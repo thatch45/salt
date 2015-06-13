@@ -727,6 +727,12 @@ class State(object):
                 return ret
         return ret
 
+    def reset_run_num(self):
+        '''
+        Reset the run_num to 0
+        '''
+        self.__run_num = 0
+
     def load_modules(self, data=None):
         '''
         Load the modules into the state
