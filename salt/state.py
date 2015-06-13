@@ -593,6 +593,7 @@ class State(object):
     Class used to execute salt states
     '''
     def __init__(self, opts, pillar=None, jid=None):
+        self.states_loader = 'states'
         if 'grains' not in opts:
             opts['grains'] = salt.loader.grains(opts)
         self.opts = opts
@@ -607,7 +608,6 @@ class State(object):
         self.jid = jid
         self.instance_id = str(id(self))
         self.inject_globals = {}
-        self.states_loader = 'states'
 
     def _gather_pillar(self):
         '''
