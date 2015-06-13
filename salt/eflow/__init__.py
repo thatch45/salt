@@ -26,7 +26,7 @@ class EFlowState(salt.state.HighState):
     def __init__(self, opts):
         opts['file_roots'] = opts['eflow_roots']
         self.opts = opts
-        salt.state.HighState.__init__(self.opts)
+        salt.state.HighState.__init__(self, self.opts)
         self.state.inject_globals = {'__reg__': {}}
         self.state.states_loader = 'eflow'
         self.event = salt.utils.event.get_master_event(
