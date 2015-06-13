@@ -93,5 +93,7 @@ class Engine(multiprocessing.Process):
         kwargs = self.config or {}
         try:
             self.engine[self.fun](**kwargs)
-        except Exception as exc:
-            log.critical('Engine {0} could not be started! Error: {1}'.format(self.engine, exc))
+        except Exception:
+            log.critical(
+                    'Engine {0} could not be started! Error: '.format(self.engine),
+                    exc_info=True)
