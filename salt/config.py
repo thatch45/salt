@@ -848,6 +848,7 @@ DEFAULT_MASTER_OPTS = {
     'auth_mode': 1,
     'user': 'root',
     'worker_threads': 5,
+    'environment': None,
     'sock_dir': os.path.join(salt.syspaths.SOCK_DIR, 'master'),
     'ret_port': '4506',
     'timeout': 5,
