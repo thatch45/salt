@@ -26,9 +26,8 @@ class EFlowState(salt.state.HighState):
     def __init__(self, opts):
         opts['file_roots'] = opts['eflow_roots']
         self.opts = opts
-        salt.state.HighState.__init__(self, self.opts)
+        salt.state.HighState.__init__(self, self.opts, loader='eflow')
         self.state.inject_globals = {'__reg__': {}}
-        self.state.states_loader = 'eflow'
         self.event = salt.utils.event.get_master_event(
                 self.opts,
                 self.opts['sock_dir'])
@@ -40,6 +39,7 @@ class EFlowState(salt.state.HighState):
         chunks = self.get_chunks()
         while True:
             try:
+                print('call the runtime')
                 self.call_runtime(chunks)
             except Exception:
                 time.sleep(self.opts['eflow_interval'])
@@ -74,20 +74,23 @@ class EFlowState(salt.state.HighState):
             else:
                 high['__exclude__'] = exclude
             err += errors
+        high, ext_errors = self.state.reconcile_extend(high)
+        err += ext_errors
+        err += self.state.verify_high(high)
         if err:
             raise SaltRenderError(err)
-        return self.compile_low_chunks()
+        return self.state.compile_high_data(high)
 
     def get_events(self):
         '''
         iterate over the available events and return a list of events
         '''
         ret = []
-        for event in self.event.iter_events(full=True):
+        while True:
+            event = self.event.get_event(wait=1)
             if event is None:
-                break
+                return ret
             ret.append(event)
-        return ret
 
     def call_runtime(self, chunks):
         '''
@@ -95,12 +98,15 @@ class EFlowState(salt.state.HighState):
         '''
         interval = self.opts['eflow_interval']
         while True:
+            print('get events')
             events = self.get_events()
+            print(events)
             if not events:
                 time.sleep(interval)
             self.state.inject_globals['__events__'] = events
             start = time.time()
-            self.state.call_chunks(chunks)
+            running = self.state.call_chunks(chunks)
+            print(running)
             elapsed = time.time() - start
             left = interval - elapsed
             if left > 0:
