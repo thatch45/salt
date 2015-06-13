@@ -39,7 +39,6 @@ class EFlowState(salt.state.HighState):
         chunks = self.get_chunks()
         while True:
             try:
-                print('call the runtime')
                 self.call_runtime(chunks)
             except Exception:
                 time.sleep(self.opts['eflow_interval'])
@@ -87,7 +86,7 @@ class EFlowState(salt.state.HighState):
         '''
         ret = []
         while True:
-            event = self.event.get_event(wait=1)
+            event = self.event.get_event(wait=1, full=True)
             if event is None:
                 return ret
             ret.append(event)
@@ -98,15 +97,12 @@ class EFlowState(salt.state.HighState):
         '''
         interval = self.opts['eflow_interval']
         while True:
-            print('get events')
             events = self.get_events()
-            print(events)
             if not events:
                 time.sleep(interval)
             self.state.inject_globals['__events__'] = events
             start = time.time()
-            running = self.state.call_chunks(chunks)
-            print(running)
+            self.state.call_chunks(chunks)
             elapsed = time.time() - start
             left = interval - elapsed
             if left > 0:

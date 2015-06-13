@@ -22,7 +22,7 @@ def set_(name, add, match):
     if reg_key not in __reg__:
         __reg__[reg_key] = set()
     for event in __events__:
-        if fnmatch.fnmatch(event['tag'], name):
+        if fnmatch.fnmatch(event['tag'], match):
             val = event['data'].get(add)
             if val is None:
                 val = 'None'
