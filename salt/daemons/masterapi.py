@@ -145,7 +145,7 @@ def clean_expired_tokens(opts):
     for (dirpath, dirnames, filenames) in os.walk(opts['token_dir']):
         for token in filenames:
             token_path = os.path.join(dirpath, token)
-            with salt.utils.fopen(token_path) as token_file:
+            with salt.utils.fopen(token_path, 'rb') as token_file:
                 token_data = serializer.loads(token_file.read())
                 if 'expire' not in token_data or token_data.get('expire', 0) < time.time():
                     try:
