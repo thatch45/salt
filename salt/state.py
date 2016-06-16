@@ -1723,6 +1723,7 @@ class State(object):
                 if self.mocked:
                     ret = mock_ret(cdata)
                 else:
+                    self.format_slots(cdata)
                     ret = self.states[cdata['full']](*cdata['args'],
                                                      **cdata['kwargs'])
                 self.states.inject_globals = {}
@@ -1778,6 +1779,20 @@ class State(object):
         ret['__id__'] = low['__id__']
         log.info('Completed state [{0}] at time {1} duration_in_ms={2}'.format(low['name'], finish_time.time().isoformat(), duration))
         return ret
+
+    def format_slots(self, cdata):
+        '''
+        Format slots reads in the arguments to the call and executes slots
+        '''
+        for ind in range(len(cdata['args'])):
+            arg = cdata['args'][ind]
+            if arg.startswith('__slot__:'):
+                # It is a slot! call it!
+                fmt = arg.split(':')
+                if len(fmt) < 3:
+                    continue
+                if fmt[1] == 'salt':
+                    cdata['args'][ind] = self.functions[fmt[2]](*fmt[3:])
 
     def call_chunks(self, chunks):
         '''
