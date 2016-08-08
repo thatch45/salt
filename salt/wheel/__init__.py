@@ -61,6 +61,8 @@ class WheelClient(salt.client.mixins.SyncClientMixin,
         load = kwargs
         load['cmd'] = 'wheel'
         interface = self.opts['interface']
+        # The wheel interface is made to only ever be called locally, therefore
+        # if the master interface is available on localhost we should use it
         if interface == '0.0.0.0':
             interface = '127.0.0.1'
         master_uri = 'tcp://' + salt.utils.ip_bracket(interface) + \
