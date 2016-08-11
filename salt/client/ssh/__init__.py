@@ -1072,14 +1072,18 @@ ARGS = {10}\n'''.format(self.minion_config,
 
         # FIXME: this discards output from ssh_shim if the shim succeeds.  It should
         # always save the shim output regardless of shim success or failure.
+        log.trace('PRE STDOUT:\n{0}'.format(stdout))
         while re.search(RSTR_RE, stdout):
             stdout = re.split(RSTR_RE, stdout, 1)[1].strip()
+        log.trace('POST STDOUT:\n{0}'.format(stdout))
 
         if re.search(RSTR_RE, stderr):
             # Found RSTR in stderr which means SHIM completed and only
             # and remaining output is only from salt.
+            log.trace('PRE STDERR:\n{0}'.format(stderr))
             while re.search(RSTR_RE, stderr):
                 stderr = re.split(RSTR_RE, stderr, 1)[1].strip()
+            log.trace('POST STDERR:\n{0}'.format(stderr))
 
         else:
             # RSTR was found in stdout but not stderr - which means there
