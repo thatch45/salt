@@ -1008,6 +1008,7 @@ ARGS = {10}\n'''.format(self.minion_config,
         execute it there
         '''
         if not self.tty:
+            log.trace('Calling -WITHOUT- a tty:\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n{0}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'.format(cmd_str))
             return self.shell.exec_cmd(cmd_str)
 
         # Write the shim to a temporary file in the default temp directory
@@ -1027,6 +1028,7 @@ ARGS = {10}\n'''.format(self.minion_config,
             pass
 
         # Execute shim
+        log.trace('Calling -WITH- a tty:\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n{0}\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'.format(cmd_str))
         ret = self.shell.exec_cmd('/bin/sh \'$HOME/{0}\''.format(target_shim_file))
 
         # Remove shim from target system

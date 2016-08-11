@@ -351,11 +351,13 @@ class Shell(object):
         try:
             while term.has_unread_data:
                 stdout, stderr = term.recv()
+                log.trace('Gathered stdout: {0}'.format(stdout))
                 if stdout:
                     ret_stdout += stdout
                     buff = old_stdout + stdout
                 else:
                     buff = stdout
+                log.trace('Current STDOUT buffer: {0}'.format(buff))
                 if stderr:
                     ret_stderr += stderr
                 if buff and RSTR_RE.search(buff):
@@ -363,30 +365,37 @@ class Shell(object):
                     send_password = False
                 if buff and SSH_PASSWORD_PROMPT_RE.search(buff) and send_password:
                     if not self.passwd:
+                        log.trace('No PASSWD PERM DENIED')
                         return '', 'Permission denied, no authentication information', 254
                     if sent_passwd < passwd_retries:
                         term.sendline(self.passwd)
                         sent_passwd += 1
+                        log.trace('PASSWD RETRY')
                         continue
                     else:
                         # asking for a password, and we can't seem to send it
+                        log.trace('PASSWD AUTH FAIL')
                         return '', 'Password authentication failed', 254
                 elif buff and KEY_VALID_RE.search(buff):
                     if key_accept:
                         term.sendline('yes')
+                        log.trace('ACCEPT KEY')
                         continue
                     else:
                         term.sendline('no')
                         ret_stdout = ('The host key needs to be accepted, to '
                                       'auto accept run salt-ssh with the -i '
                                       'flag:\n{0}').format(stdout)
+                        log.trace('NO KEY ACCEPT')
                         return ret_stdout, '', 254
                 elif buff and buff.endswith('_||ext_mods||_'):
+                    log.trace('ASKING FOR EXT_MODS')
                     mods_raw = json.dumps(self.mods, separators=(',', ':')) + '|_E|0|'
                     term.sendline(mods_raw)
                 if stdout:
                     old_stdout = stdout
                 time.sleep(0.01)
+            log.trace('RETURNING: {0} | {1} | {2}'.format(ret_stdout, ret_stderr, term.exitstatus))
             return ret_stdout, ret_stderr, term.exitstatus
         finally:
             term.close(terminate=True, kill=True)

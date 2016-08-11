@@ -10,6 +10,9 @@ as ZeroMQ salt, but via ssh.
 from __future__ import absolute_import
 import json
 import copy
+import logging
+log = logging.getLogger(__name__)
+
 
 # Import salt libs
 import salt.loader
@@ -114,7 +117,9 @@ class FunctionWrapper(object):
                     minion_opts=self.minion_opts,
                     **self.kwargs
             )
+            log.trace('Calling single.cmd_block with argv: {0}'.format(single.argv))
             stdout, stderr, retcode = single.cmd_block()
+            log.trace('Ret from single.cmd_block:\n{0}'.format(stdout))
             if stderr.count('Permission Denied'):
                 return {'_error': 'Permission Denied',
                         'stdout': stdout,
