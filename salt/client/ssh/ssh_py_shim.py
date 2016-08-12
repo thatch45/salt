@@ -204,7 +204,7 @@ def main(argv):  # pylint: disable=W0613
         '--local',
         '--metadata',
         '--out', 'json',
-        '-l', 'quiet',
+        '-l', 'trace',
         '-c', OPTIONS.saltdir,
         '--',
     ] + argv_prepared
@@ -221,16 +221,26 @@ def main(argv):  # pylint: disable=W0613
     if OPTIONS.cmd_umask is not None:
         old_umask = os.umask(OPTIONS.cmd_umask)
     if OPTIONS.tty:
+        sys.stderr.write('SHIM CALLING TTY')
+        sys.stderr.flush()
         stdout, _ = subprocess.Popen(salt_argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
         sys.stdout.write(stdout)
         sys.stdout.flush()
         if OPTIONS.wipe:
             shutil.rmtree(OPTIONS.saltdir)
     elif OPTIONS.wipe:
-        subprocess.call(salt_argv)
+        sys.stderr.write('CALLING SALT-CALL ~WITH~ WIPE')
+        sys.stderr.flush()
+        retcode = subprocess.call(salt_argv)
+        sys.stderr.write('CALLED SALT-CALL ~WITH~ WIPE: {0}'.format(retcode))
+        sys.stderr.flush()
         shutil.rmtree(OPTIONS.saltdir)
     else:
-        os.execv(sys.executable, salt_argv)
+        sys.stderr.write('CALLING SALT-CALL ~WITHOUT~ WIPE')
+        sys.stderr.flush()
+        retcode = subprocess.call(salt_argv)
+        sys.stderr.write('CALLED SALT-CALL ~WITHOUT~ WIPE')
+        sys.stderr.flush()
     if OPTIONS.cmd_umask is not None:
         os.umask(old_umask)
 
