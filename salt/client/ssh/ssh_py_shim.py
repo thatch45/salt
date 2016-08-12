@@ -238,7 +238,7 @@ def main(argv):  # pylint: disable=W0613
     else:
         sys.stderr.write('CALLING SALT-CALL ~WITHOUT~ WIPE')
         sys.stderr.flush()
-        os.execv(sys.executable, salt_argv)
+        retcode = subprocess.call(salt_argv)
         sys.stderr.write('CALLED SALT-CALL ~WITHOUT~ WIPE')
         sys.stderr.flush()
     if OPTIONS.cmd_umask is not None:
