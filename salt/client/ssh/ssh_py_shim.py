@@ -227,10 +227,14 @@ def main(argv):  # pylint: disable=W0613
         if OPTIONS.wipe:
             shutil.rmtree(OPTIONS.saltdir)
     elif OPTIONS.wipe:
-        subprocess.call(salt_argv)
+        stdout, _ = subprocess.Popen(salt_argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+        sys.stdout.write(stdout)
+        sys.stdout.flush()
         shutil.rmtree(OPTIONS.saltdir)
     else:
-        os.execv(sys.executable, salt_argv)
+        stdout, _ = subprocess.Popen(salt_argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+        sys.stdout.write(stdout)
+        sys.stdout.flush()
     if OPTIONS.cmd_umask is not None:
         os.umask(old_umask)
 
