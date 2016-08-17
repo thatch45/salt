@@ -57,7 +57,7 @@ except ImportError:
     HAS_ZMQ = False
 
 # The directory where salt thin is deployed
-DEFAULT_THIN_DIR = '/var/tmp/.%%USER%%_%%FQDNUUID%%_salt'
+DEFAULT_THIN_DIR = '/opt/.%%USER%%_%%FQDNUUID%%_salt'
 
 # RSTR is just a delimiter to distinguish the beginning of salt STDOUT
 # and STDERR.  There is no special meaning.  Messages prior to RSTR in
@@ -288,7 +288,7 @@ class SSH(object):
         }
         if self.opts.get('rand_thin_dir'):
             self.defaults['thin_dir'] = os.path.join(
-                    '/tmp',
+                    '/opt',
                     '.{0}'.format(uuid.uuid4().hex[:6]))
             self.opts['ssh_wipe'] = 'True'
         self.serial = salt.payload.Serial(opts)
